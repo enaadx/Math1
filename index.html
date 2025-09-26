@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار الأنماط العددية - للأطفال</title>
+  <style>
+    body {
+      font-family: "Tahoma", Arial;
+      direction: rtl;
+      background: #f4f8fc;
+      padding: 20px;
+      color: #333;
+      line-height: 1.8;
+    }
+    .question-box {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 2px solid #2196f3;
+    }
+    .btn {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-primary { background: #4caf50; color: white; }
+    .feedback { font-weight: bold; margin-top: 10px; }
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📘 اختبار الأنماط العددية (من كتاب الرياضيات)</h2>
+<p>اقرأ الشرح جيدًا، ثم أجب عن السؤال. لديك محاولة ثانية إذا أخطأت.</p>
+
+<div id="quiz"></div>
+<div id="result"></div>
+
+<script>
+const questions = [
+  {
+    q:"السؤال 1: لدينا الأعداد: 10، 20، 30 … ما النمط هنا؟",
+    explain:"لاحظ أن كل عدد يزداد بمقدار 10.",
+    a:"يزيد 10"
+  },
+  {
+    q:"السؤال 2: أكمل النمط: 10، 20، 30، … ؟",
+    explain:"كل مرة نضيف 10. بعد 30 يصبح؟",
+    a:"40"
+  },
+  {
+    q:"السؤال 3: أكمل: 40، 60، 80 … ؟",
+    explain:"نضيف 20 كل مرة. بعد 80 يصبح؟",
+    a:"100"
+  },
+  {
+    q:"السؤال 4: أكمل: 15، 25، 35 … ؟",
+    explain:"هنا نضيف 10 كل مرة. العدد بعد 35؟",
+    a:"45"
+  },
+  {
+    q:"السؤال 5: أكمل: 5، 10، 15، 20 … ؟",
+    explain:"الزيادة بمقدار 5. بعد 20؟",
+    a:"25"
+  },
+  {
+    q:"السؤال 6: أكمل: 2، 4، 6، 8 … ؟",
+    explain:"كل مرة نزيد 2. العدد التالي؟",
+    a:"10"
+  },
+  {
+    q:"السؤال 7: أكمل: 100، 90، 80 … ؟",
+    explain:"كل مرة ننقص 10. العدد التالي؟",
+    a:"70"
+  },
+  {
+    q:"السؤال 8: أكمل: 3، 6، 9، 12 … ؟",
+    explain:"كل مرة نضيف 3. العدد التالي؟",
+    a:"15"
+  },
+  {
+    q:"السؤال 9: أكمل: 20، 18، 16 … ؟",
+    explain:"النمط ينقص بمقدار 2. العدد التالي؟",
+    a:"14"
+  },
+  {
+    q:"السؤال 10: أكمل: 7، 14، 21 … ؟",
+    explain:"كل مرة نضيف 7. العدد التالي؟",
+    a:"28"
+  },
+  {
+    q:"السؤال 11: أكمل: 50، 60، 70، 80 … ؟",
+    explain:"كل مرة نزيد 10. بعد 80؟",
+    a:"90"
+  },
+  {
+    q:"السؤال 12: أكمل: 5، 10، 20 … ؟",
+    explain:"كل مرة نضرب في 2. بعد 20؟",
+    a:"40"
+  },
+  {
+    q:"السؤال 13: أكمل: 2، 4، 8، 16 … ؟",
+    explain:"كل مرة نضرب في 2. بعد 16؟",
+    a:"32"
+  },
+  {
+    q:"السؤال 14: أكمل: 1، 4، 9، 16 … ؟",
+    explain:"هذه مربعات الأعداد: 1²، 2²، 3² … العدد التالي؟",
+    a:"25"
+  },
+  {
+    q:"السؤال 15: أكمل: 11، 22، 33، 44 … ؟",
+    explain:"كل مرة نزيد 11. بعد 44؟",
+    a:"55"
+  }
+];
+
+let current = 0;
+let wrongAttempts = 0;
+
+function loadQuestion() {
+  if (current < questions.length) {
+    document.getElementById("quiz").innerHTML = `
+      <div class="question-box">
+        <p><b>${questions[current].q}</b></p>
+        <p>💡 ${questions[current].explain}</p>
+        <input type="text" id="answer" placeholder="اكتب الإجابة هنا">
+        <br><br>
+        <button class="btn btn-primary" onclick="checkAnswer()">تحقق</button>
+        <div id="feedback" class="feedback"></div>
+      </div>`;
+  } else {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML =
+      `🎉 أحسنت! انتهى الاختبار.<br>عدد المحاولات الخاطئة: ${wrongAttempts} من ${questions.length} سؤال.`;
+  }
+}
+
+function checkAnswer() {
+  const ans = document.getElementById("answer").value.trim();
+  const feedback = document.getElementById("feedback");
+  
+  if (ans === questions[current].a) {
+    feedback.style.color = "green";
+    feedback.innerHTML = "✔️ صحيح!";
+    setTimeout(() => {
+      current++;
+      loadQuestion();
+    }, 1000);
+  } else {
+    wrongAttempts++;
+    feedback.style.color = "red";
+    feedback.innerHTML = "❌ خطأ، جرّب مرة أخرى.";
+  }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
