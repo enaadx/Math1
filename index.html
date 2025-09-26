@@ -26,8 +26,12 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+      display: block;
+      width: 100%;
+      text-align: right;
     }
-    .btn-primary { background: #4caf50; color: white; }
+    .btn-option { background: #e3f2fd; color: #000; }
+    .btn-option:hover { background: #bbdefb; }
     .feedback { font-weight: bold; margin-top: 10px; }
     #result {
       font-size: 20px;
@@ -40,7 +44,7 @@
 <body>
 
 <h2>📘 اختبار الأنماط العددية (من كتاب الرياضيات)</h2>
-<p>اقرأ الشرح جيدًا، ثم أجب عن السؤال. لديك محاولة ثانية إذا أخطأت.</p>
+<p>اقرأ الشرح جيدًا، ثم اختر الإجابة الصحيحة. لديك محاولة ثانية إذا أخطأت.</p>
 
 <div id="quiz"></div>
 <div id="result"></div>
@@ -50,76 +54,91 @@ const questions = [
   {
     q:"السؤال 1: لدينا الأعداد: 10، 20، 30 … ما النمط هنا؟",
     explain:"لاحظ أن كل عدد يزداد بمقدار 10.",
+    options:["يزيد 5","يزيد 10","ينقص 5"],
     a:"يزيد 10"
   },
   {
     q:"السؤال 2: أكمل النمط: 10، 20، 30، … ؟",
     explain:"كل مرة نضيف 10. بعد 30 يصبح؟",
+    options:["35","40","50"],
     a:"40"
   },
   {
     q:"السؤال 3: أكمل: 40، 60، 80 … ؟",
     explain:"نضيف 20 كل مرة. بعد 80 يصبح؟",
+    options:["90","100","120"],
     a:"100"
   },
   {
     q:"السؤال 4: أكمل: 15، 25، 35 … ؟",
     explain:"هنا نضيف 10 كل مرة. العدد بعد 35؟",
+    options:["40","45","50"],
     a:"45"
   },
   {
     q:"السؤال 5: أكمل: 5، 10، 15، 20 … ؟",
     explain:"الزيادة بمقدار 5. بعد 20؟",
+    options:["22","25","30"],
     a:"25"
   },
   {
     q:"السؤال 6: أكمل: 2، 4، 6، 8 … ؟",
     explain:"كل مرة نزيد 2. العدد التالي؟",
+    options:["9","10","12"],
     a:"10"
   },
   {
     q:"السؤال 7: أكمل: 100، 90، 80 … ؟",
     explain:"كل مرة ننقص 10. العدد التالي؟",
+    options:["60","70","75"],
     a:"70"
   },
   {
     q:"السؤال 8: أكمل: 3، 6، 9، 12 … ؟",
     explain:"كل مرة نضيف 3. العدد التالي؟",
+    options:["14","15","18"],
     a:"15"
   },
   {
     q:"السؤال 9: أكمل: 20، 18، 16 … ؟",
     explain:"النمط ينقص بمقدار 2. العدد التالي؟",
+    options:["14","15","12"],
     a:"14"
   },
   {
     q:"السؤال 10: أكمل: 7، 14، 21 … ؟",
     explain:"كل مرة نضيف 7. العدد التالي؟",
+    options:["25","27","28"],
     a:"28"
   },
   {
     q:"السؤال 11: أكمل: 50، 60، 70، 80 … ؟",
     explain:"كل مرة نزيد 10. بعد 80؟",
+    options:["85","90","100"],
     a:"90"
   },
   {
     q:"السؤال 12: أكمل: 5، 10، 20 … ؟",
     explain:"كل مرة نضرب في 2. بعد 20؟",
+    options:["30","35","40"],
     a:"40"
   },
   {
     q:"السؤال 13: أكمل: 2، 4، 8، 16 … ؟",
     explain:"كل مرة نضرب في 2. بعد 16؟",
+    options:["24","30","32"],
     a:"32"
   },
   {
     q:"السؤال 14: أكمل: 1، 4، 9، 16 … ؟",
     explain:"هذه مربعات الأعداد: 1²، 2²، 3² … العدد التالي؟",
+    options:["20","25","30"],
     a:"25"
   },
   {
     q:"السؤال 15: أكمل: 11، 22، 33، 44 … ؟",
     explain:"كل مرة نزيد 11. بعد 44؟",
+    options:["55","66","77"],
     a:"55"
   }
 ];
@@ -129,13 +148,16 @@ let wrongAttempts = 0;
 
 function loadQuestion() {
   if (current < questions.length) {
+    let opts = "";
+    questions[current].options.forEach(opt => {
+      opts += `<button class="btn btn-option" onclick="checkAnswer('${opt}')">${opt}</button>`;
+    });
+    
     document.getElementById("quiz").innerHTML = `
       <div class="question-box">
         <p><b>${questions[current].q}</b></p>
         <p>💡 ${questions[current].explain}</p>
-        <input type="text" id="answer" placeholder="اكتب الإجابة هنا">
-        <br><br>
-        <button class="btn btn-primary" onclick="checkAnswer()">تحقق</button>
+        ${opts}
         <div id="feedback" class="feedback"></div>
       </div>`;
   } else {
@@ -145,11 +167,10 @@ function loadQuestion() {
   }
 }
 
-function checkAnswer() {
-  const ans = document.getElementById("answer").value.trim();
+function checkAnswer(choice) {
   const feedback = document.getElementById("feedback");
   
-  if (ans === questions[current].a) {
+  if (choice === questions[current].a) {
     feedback.style.color = "green";
     feedback.innerHTML = "✔️ صحيح!";
     setTimeout(() => {
